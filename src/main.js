@@ -77,22 +77,26 @@ ps.forEach((element) => {
     
 });
 }
-
 const map = Object.fromEntries(
   Object.entries(cssProps).map(([attr, cssProp]) => [
     attr,
-    el => el.style[cssProp] = translate(el.getAttribute(attr))
+    el => el.style[attr] = translate(el.getAttribute(attr))
   ])
 );
-
+const reverseMap = Object.fromEntries(
+  Object.entries(cssProps).map(([englishProp, spanishName]) => [
+    spanishName,
+    englishProp
+  ])
+);
 function parseAttr() {
-  const selector = Object.keys(cssProps)
-    .map(attr => `[${attr}]`)
-    .join(", ");
-  document.querySelectorAll(selector).forEach(el => {
-    Object.keys(map).forEach(attr => {
-      if (el.hasAttribute(attr)) {
-        map[attr](el);
+  document.querySelectorAll("*").forEach(el => {
+    Object.keys(reverseMap).forEach(spanishAttr => {
+      if (el.hasAttribute(spanishAttr)) {
+        const englishProp = reverseMap[spanishAttr];
+        const value = el.getAttribute(spanishAttr);
+        const translatedValue = translate(value);
+        el.style[englishProp] = translatedValue;
       }
     });
   });
