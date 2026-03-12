@@ -1,3 +1,4 @@
+import tags from "./htmlTags.js";
 import diccionario from "./dictionary.js";
 import { cssProps } from "./AllCssProps.js";
 function splitArgs(str) {
@@ -65,18 +66,6 @@ function translate(value) {
     // Valor simple (color)
     return diccionario[value.toLowerCase()] || value;
 }
-function parseTags(){
-    var h1s = document.querySelectorAll("titulo1");
-    var h2s = document.querySelectorAll("titulo2");
-    var h3s = document.querySelectorAll("titulo3");
-    var h4s = document.querySelectorAll("titulo4");
-    var h5s = document.querySelectorAll("titulo5");
-    var h6s = document.querySelectorAll("titulo6");
-    var ps = document.querySelectorAll("texto");
-ps.forEach((element) => {
-    
-});
-}
 const map = Object.fromEntries(
   Object.entries(cssProps).map(([attr, cssProp]) => [
     attr,
@@ -101,5 +90,18 @@ function parseAttr() {
     });
   });
 }
-parseAttr();
+function parseTags() {
+  Object.entries(tags).forEach(([es, en]) => {
+    const elements = document.querySelectorAll(es)
+    elements.forEach(el => {
+      const nuevo = document.createElement(en)
+      for (let attr of el.attributes) {
+        nuevo.setAttribute(attr.name, attr.value)
+      }
+      nuevo.innerHTML = el.innerHTML
+      el.replaceWith(nuevo)
+    })
+  })
+}
 parseTags();
+parseAttr();
