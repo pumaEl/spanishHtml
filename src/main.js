@@ -1,6 +1,8 @@
 import tags from "./htmlTags.js";
 import diccionario from "./dictionary.js";
+import htmlAttrs from "./htmlAttr.js";
 import { cssProps } from "./AllCssProps.js";
+
 function splitArgs(str) {
     let result = [];
     let current = "";
@@ -18,18 +20,6 @@ function splitArgs(str) {
     if (current) result.push(current.trim());
     return result;
 }
-function translateBorder(value) {
-    return value
-        .trim()
-        .split(/\s+/)
-        .map(part => {
-            if (/[a-z]/i.test(part)) {
-                return translate(part);
-            }
-            return part;
-        })
-        .join(" ");
-}
 function translateStop(stop) {
     const parts = stop.trim().split(/\s+/);
     // nada que traducir
@@ -37,6 +27,9 @@ function translateStop(stop) {
     // SOLO traducimos la primera parte (color)
     parts[0] = translate(parts[0]);
     return parts.join(" ");
+}
+function translateMedia(condition) {
+    return condition.replace(/(\w+)(?=\s*:)/g, match => diccionario[match.toLowerCase()] || match);
 }
 function translate(value) {
     if (!value) return value;
@@ -58,13 +51,61 @@ function translate(value) {
         const args = splitArgs(fnArgs).map(arg => translateStop(arg));
         return `${translatedFn}(${args.join(", ")})`;
     }
-    const brMatch = value.match(/([0-9])([a-z]{2,3}|%)(.*)/g);
-    if (brMatch){
-        const vals = translateBorder(value);
-        return vals;
+    // Traducir palabras individuales (incluye palabras con guiones como "borde-caja")
+    value = value.replace(/([a-zA-Z][a-zA-Z0-9-]*)/g, match => {
+        const lower = match.toLowerCase();
+        return diccionario[lower] || match;
+    });
+    return value;
+}
+
+function translateSelector(selector) {
+    return selector.replace(/:([a-z-]+)/g, (match, pseudo) => {
+        const translated = diccionario[pseudo.toLowerCase()] || pseudo;
+        return `:${translated}`;
+    });
+}
+
+function translateCSS(css) {
+
+  // traducir @media
+  css = css.replace(/@media\s*\(([^)]+)\)/gi, (match, cond) => {
+    return `@media (${translateMedia(cond)})`;
+  });
+
+  // traducir selectores pseudo
+  css = css.replace(/:([a-z-]+)/gi, (m, pseudo) => {
+    return ":" + (diccionario[pseudo] || pseudo);
+  });
+
+  // traducir propiedades
+  css = css.replace(/([a-zA-Z-]+)\s*:/g, (match, prop) => {
+
+    const lower = prop.toLowerCase();
+
+    if (reverseMap[lower]) {
+      return reverseMap[lower] + ":";
     }
-    // Valor simple (color)
-    return diccionario[value.toLowerCase()] || value;
+
+    const translated = translate(prop);
+
+    if (translated !== prop) {
+      const kebab = translated
+        .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+        .toLowerCase();
+
+      return kebab + ":";
+    }
+
+    return match;
+  });
+
+  // traducir valores
+  css = css.replace(/:\s*([^;}{]+)/g, (match, value) => {
+    return ": " + translate(value.trim());
+  });
+
+  return css;
 }
 const map = Object.fromEntries(
   Object.entries(cssProps).map(([attr, cssProp]) => [
@@ -74,21 +115,44 @@ const map = Object.fromEntries(
 );
 const reverseMap = Object.fromEntries(
   Object.entries(cssProps).map(([englishProp, spanishName]) => [
-    spanishName,
+    spanishName.toLowerCase(),
     englishProp
   ])
 );
+function translateAttr(name) {
+  // Translate only Spanish attribute names to English equivalents
+  return htmlAttrs[name] || name;
+}
+
+function kebabToCamel(str) {
+  return str.replace(/-([a-z])/g, (_, char) => char.toUpperCase());
+}
+
 function parseAttr() {
   document.querySelectorAll("*").forEach(el => {
-    Object.keys(reverseMap).forEach(spanishAttr => {
-      if (el.hasAttribute(spanishAttr)) {
-        const englishProp = reverseMap[spanishAttr];
-        const value = el.getAttribute(spanishAttr);
+    // copy attributes into array so we can modify while iterating
+    Array.from(el.attributes).forEach(attr => {
+      const name = attr.name;
+      if (htmlAttrs[name]) {
+        const newName = translateAttr(name);
+        if (newName !== name) {
+          el.setAttribute(newName, attr.value);
+          el.removeAttribute(name);
+        }
+      } else if (reverseMap[name]) {
+        const englishProp = reverseMap[name];
+        const value = attr.value;
         const translatedValue = translate(value);
-        el.style[englishProp] = translatedValue;
+        el.style[kebabToCamel(englishProp)] = translatedValue;
+        el.removeAttribute(name);
       }
     });
   });
+}
+function parseEstilos() {
+    document.querySelectorAll('style').forEach(styleEl => {
+        styleEl.textContent = translateCSS(styleEl.textContent);
+    });
 }
 function parseTags() {
   Object.entries(tags).forEach(([es, en]) => {
@@ -104,4 +168,5 @@ function parseTags() {
   })
 }
 parseTags();
+parseEstilos();
 parseAttr();
