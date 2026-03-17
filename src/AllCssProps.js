@@ -453,6 +453,7 @@ export const cssProps = {
   "color-interpolation": "interpolacionColor",
   "color-rendering": "renderizadoColor",
   "fill": "rellenoSvg",
+  "color-scheme": "esquemaColor",
   "fill-opacity": "opacidadRellenoSvg",
   "fill-rule": "reglaRellenoSvg",
   "paint-order": "ordenPintado",

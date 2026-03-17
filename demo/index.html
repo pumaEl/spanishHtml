@@ -1,14 +1,636 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Spanish HTML - Sitio Web Profesional</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
-  </head>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Space+Grotesk:wght@300;400;500;600&display=swap">
+
+</head>
 <body>
-  <estilo>
+    <estilo>
+    :raiz {
+      esquemaColor: claro;
+      --fondo: #0f1a23;
+      --fondo-claro: #152635;
+      --fondo-tarjeta: rvat(255, 255, 255, 0.08);
+      --borde: rvat(255, 255, 255, 0.12);
+      --texto: #f4f6fb;
+      --texto-suave: rvat(244, 246, 251, 0.7);
+      --acento: #f4a340;
+      --acento-oscuro: #c87a20;
+      --menta: #3dd6a1;
+      --sombra: 0 24px 60px rvat(6, 13, 20, 0.45);
+      --radio: 20px;
+      --maximo: 1120px;
+    }
+
+    * {
+      tamanoCaja: borde-caja;
+      margen: 0;
+      relleno: 0;
+    }
+
+    body {
+      familiaFuente: "Space Grotesk", system-ui, sans-serif;
+      color: var(--texto);
+      fondo: degradado-radial(circulo en-arriba, #1c3b52 0%, var(--fondo) 55%, #0b1218 100%);
+      alturaMinima: 100vh;
+      alturaLinea: 1.6;
+    }
+
+    a {
+      color: heredar;
+      decoracionTexto: ninguno;
+    }
+
+    .contenedor {
+      ancho: min(92%, var(--maximo));
+      margen: 0 auto;
+    }
+
+    .encabezado {
+      posicion: relativo;
+      relleno: 26px 0 0;
+      indiceZ: 3;
+    }
+
+    .barra {
+      mostrar: flexible;
+      alinearItems: centro;
+      justificarContenido: espacio-entre;
+      espacio: 18px;
+    }
+
+    .marca {
+      mostrar: flexible;
+      alinearItems: centro;
+      espacio: 12px;
+      pesoFuente: 600;
+      espacioLetras: 0.4px;
+    }
+
+    .marca span {
+      mostrar: en-linea-flex;
+      alinearItems: centro;
+      justificarContenido: centro;
+      ancho: 42px;
+      altura: 42px;
+      radioBorde: 14px;
+      fondo: degradado-lineal(135deg, var(--acento), var(--menta));
+      color: #0d0f13;
+      pesoFuente: 700;
+    }
+
+    .menu {
+      mostrar: flexible;
+      espacio: 20px;
+      alinearItems: centro;
+      tamanoFuente: 0.95rem;
+    }
+
+    .menu a {
+      color: var(--texto-suave);
+      transicion: color 0.2s facil;
+    }
+
+    .menu a:hover {
+      color: var(--texto);
+    }
+
+    .boton {
+      mostrar: en-linea-flex;
+      alinearItems: centro;
+      justificarContenido: centro;
+      relleno: 12px 22px;
+      radioBorde: 999px;
+      borde: 1px solido transparente;
+      pesoFuente: 600;
+      fondo: var(--acento);
+      color: #0f1218;
+      transicion: transformar 0.2s facil, sombraCaja 0.2s facil;
+      sombraCaja: 0 16px 30px rvat(244, 163, 64, 0.3);
+    }
+
+    .boton.secundario {
+      fondo: transparente;
+      colorBorde: var(--borde);
+      color: var(--texto);
+      sombraCaja: ninguno;
+    }
+
+    .boton:hover {
+      transformar: trasladar-y(-2px);
+      sombraCaja: 0 20px 40px rvat(244, 163, 64, 0.32);
+    }
+
+    .destacado {
+      relleno: 90px 0 60px;
+      posicion: relativo;
+      desbordamiento: oculto;
+    }
+
+    .destacado::before {
+      contenido: "";
+      posicion: absoluto;
+      ancho: 380px;
+      altura: 380px;
+      derecha: -120px;
+      arriba: 50px;
+      radioBorde: 50%;
+      fondo: radial-gradient(circulo, rvat(61, 214, 161, 0.4), transparente 70%);
+      filtro: desenfocar(20px);
+      opacidad: 0.8;
+    }
+
+    .destacado-rejilla {
+      mostrar: cuadricula;
+      espacio: 40px;
+      columnasRejilla: repetir(auto-ajustar, minmax(260px, 1fr));
+      alinearItems: centro;
+      posicion: relativo;
+      indiceZ: 2;
+    }
+
+    .etiqueta {
+      mostrar: en-linea-flex;
+      alinearItems: centro;
+      espacio: 8px;
+      relleno: 8px 14px;
+      radioBorde: 999px;
+      fondo: rvat(255, 255, 255, 0.1);
+      borde: 1px solido var(--borde);
+      tamanoFuente: 0.85rem;
+      espacioLetras: 0.3px;
+      color: var(--texto-suave);
+      margenInferior: 16px;
+    }
+
+    h1 {
+      familiaFuente: "Fraunces", serif;
+      tamanoFuente: limitar(2.6rem, 4vw, 3.8rem);
+      alturaLinea: 1.05;
+      margenInferior: 18px;
+    }
+
+    .destacado p {
+      color: var(--texto-suave);
+      tamanoFuente: 1.05rem;
+      margenInferior: 24px;
+    }
+
+    .acciones {
+      mostrar: flexible;
+      envolverFlex: envolver;
+      espacio: 14px;
+    }
+
+    .tarjeta-destacado {
+      fondo: degradado-lineal(160deg, rvat(255, 255, 255, 0.13), rvat(255, 255, 255, 0.03));
+      radioBorde: var(--radio);
+      relleno: 28px;
+      borde: 1px solido var(--borde);
+      sombraCaja: var(--sombra);
+      posicion: relativo;
+      desbordamiento: oculto;
+    }
+
+    .tarjeta-destacado::after {
+      contenido: "";
+      posicion: absoluto;
+      inset: 0;
+      fondo: degradado-lineal(120deg, transparente, rvat(244, 163, 64, 0.12));
+      opacidad: 0.8;
+      eventosPuntero: ninguno;
+    }
+
+    .datos {
+      mostrar: cuadricula;
+      columnasRejilla: repetir(auto-ajustar, minmax(150px, 1fr));
+      espacio: 18px;
+      margenSuperior: 20px;
+    }
+
+    .dato {
+      fondo: rvat(15, 26, 35, 0.6);
+      relleno: 16px;
+      radioBorde: 16px;
+      borde: 1px solido var(--borde);
+    }
+
+    .dato strong {
+      mostrar: bloque;
+      tamanoFuente: 1.4rem;
+      margenInferior: 4px;
+    }
+
+    .seccion {
+      relleno: 70px 0;
+    }
+
+    .titulo-seccion {
+      mostrar: flexible;
+      alinearItems: fin-flex;
+      justificarContenido: espacio-entre;
+      espacio: 20px;
+      margenInferior: 32px;
+    }
+
+    .titulo-seccion h2 {
+      familiaFuente: "Fraunces", serif;
+      tamanoFuente: limitar(2rem, 3.5vw, 2.8rem);
+    }
+
+    .titulo-seccion p {
+      anchoMaximo: 420px;
+      color: var(--texto-suave);
+    }
+
+    .rejilla {
+      mostrar: cuadricula;
+      espacio: 20px;
+      columnasRejilla: repetir(auto-ajustar, minmax(240px, 1fr));
+    }
+
+    .tarjeta {
+      fondo: var(--fondo-tarjeta);
+      radioBorde: var(--radio);
+      borde: 1px solido var(--borde);
+      relleno: 24px;
+      sombraCaja: var(--sombra);
+      alturaMinima: 220px;
+      posicion: relativo;
+      desbordamiento: oculto;
+    }
+
+    .tarjeta span {
+      mostrar: en-linea-flex;
+      alinearItems: centro;
+      justificarContenido: centro;
+      ancho: 46px;
+      altura: 46px;
+      radioBorde: 16px;
+      fondo: rvat(244, 163, 64, 0.15);
+      margenInferior: 14px;
+      pesoFuente: 600;
+      color: var(--acento);
+    }
+
+    .tarjeta h3 {
+      margenInferior: 10px;
+      tamanoFuente: 1.15rem;
+    }
+
+    .tarjeta p {
+      color: var(--texto-suave);
+      tamanoFuente: 0.98rem;
+    }
+
+    .panel-codigo {
+      fondo: #0b1117;
+      radioBorde: var(--radio);
+      borde: 1px solido rvat(255, 255, 255, 0.08);
+      relleno: 26px;
+      desbordamiento: oculto;
+      sombraCaja: var(--sombra);
+    }
+
+    .panel-codigo header {
+      mostrar: flexible;
+      espacio: 8px;
+      margenInferior: 16px;
+    }
+
+    .punto {
+      ancho: 12px;
+      altura: 12px;
+      radioBorde: 50%;
+      fondo: rvat(255, 255, 255, 0.15);
+    }
+
+    pre {
+      margen: 0;
+      familiaFuente: "JetBrains Mono", "Fira Code", monospace;
+      tamanoFuente: 0.9rem;
+      alturaLinea: 1.6;
+      color: #cfe6ff;
+      espacioBlanco: pre-ajustar;
+    }
+
+    .pasos {
+      mostrar: cuadricula;
+      espacio: 18px;
+    }
+
+    .paso {
+      mostrar: cuadricula;
+      columnasRejilla: 48px 1fr;
+      espacio: 16px;
+      alinearItems: inicio;
+      relleno: 18px;
+      radioBorde: 18px;
+      fondo: rvat(255, 255, 255, 0.05);
+      borde: 1px solido var(--borde);
+    }
+
+    .numero {
+      ancho: 48px;
+      altura: 48px;
+      radioBorde: 16px;
+      mostrar: cuadricula;
+      colocarItems: centro;
+      fondo: rvat(61, 214, 161, 0.15);
+      color: var(--menta);
+      pesoFuente: 600;
+    }
+
+    .testimonios {
+      mostrar: cuadricula;
+      espacio: 20px;
+      columnasRejilla: repetir(auto-ajustar, minmax(260px, 1fr));
+    }
+
+    .testimonio {
+      fondo: rvat(255, 255, 255, 0.05);
+      radioBorde: 18px;
+      relleno: 22px;
+      borde: 1px solido var(--borde);
+    }
+
+    .testimonio p {
+      color: var(--texto-suave);
+      margenInferior: 16px;
+    }
+
+    .testimonio strong {
+      mostrar: bloque;
+      tamanoFuente: 0.95rem;
+    }
+
+    .cta {
+      fondo: degradado-lineal(135deg, rvat(244, 163, 64, 0.18), rvat(61, 214, 161, 0.18));
+      radioBorde: var(--radio);
+      borde: 1px solido var(--borde);
+      relleno: 40px;
+      mostrar: cuadricula;
+      espacio: 18px;
+      columnasRejilla: repetir(auto-ajustar, minmax(240px, 1fr));
+      alinearItems: centro;
+    }
+
+    .cta h2 {
+      familiaFuente: "Fraunces", serif;
+      tamanoFuente: 2rem;
+    }
+
+    footer {
+      relleno: 40px 0 60px;
+      color: var(--texto-suave);
+      alinearTexto: centro;
+      tamanoFuente: 0.9rem;
+    }
+
+    @fotogramas aparecer {
+      from {
+        opacidad: 0;
+        transformar: trasladar-y(16px);
+      }
+      to {
+        opacidad: 1;
+        transformar: trasladar-y(0);
+      }
+    }
+
+    .revelar {
+      animacion: aparecer 0.8s facil adelante;
+      opacidad: 0;
+    }
+
+    .revelar:nth-child(1) { retrasoAnimacion: 0.1s; }
+    .revelar:nth-child(2) { retrasoAnimacion: 0.2s; }
+    .revelar:nth-child(3) { retrasoAnimacion: 0.3s; }
+    .revelar:nth-child(4) { retrasoAnimacion: 0.4s; }
+
+    @medio (max-ancho: 900px) {
+      .menu {
+        mostrar: ninguno;
+      }
+    }
+
+    @medio (max-ancho: 640px) {
+      .destacado {
+        rellenoSuperior: 60px;
+      }
+
+      .barra {
+        envolverFlex: envolver;
+        justificarContenido: centro;
+      }
+
+      .titulo-seccion {
+        direccionFlex: columna;
+        alinearItems: inicio-flex;
+      }
+
+      .cta {
+        relleno: 28px;
+      }
+    }
   </estilo>
+  <encabezado clase="encabezado">
+    <contenedor clase="contenedor barra">
+      <contenedor clase="marca">
+        <span>SH</span>
+        <contenedor>
+          <contenedor>Spanish HTML</contenedor>
+          <small color="var(--texto-suave)">Proyecto educativo gratuito</small>
+        </contenedor>
+      </contenedor>
+      <menu-sup clase="menu">
+        <enlace href="#caracteristicas">Características</enlace>
+        <enlace href="#como-funciona">Cómo funciona</enlace>
+        <enlace href="#recursos">Recursos</enlace>
+        <enlace href="#comunidad">Comunidad</enlace>
+      </menu-sup>
+      <enlace clase="boton" href="#empezar">Empezar</enlace>
+    </contenedor>
+  </encabezado>
+
+  <principal>
+    <seccion clase="destacado">
+      <contenedor clase="contenedor destacado-rejilla">
+        <contenedor clase="revelar">
+          <linea clase="etiqueta">Nuevo demo en español para HTML y CSS</linea>
+          <titulo1>Aprende a programar con etiquetas claras y ejemplos reales.</titulo1>
+          <texto>
+            Spanish HTML es una experiencia visual pensada para quienes quieren practicar maquetación
+            profesional y escribir código entendible sin barreras. Todo el proyecto es gratuito y abierto.
+          </texto>
+          <contenedor clase="acciones">
+            <enlace clase="boton" href="#empezar">Quiero empezar hoy</enlace>
+            <enlace clase="boton secundario" href="#recursos">Ver recursos</enlace>
+          </contenedor>
+        </contenedor>
+        <contenedor clase="tarjeta-destacado revelar">
+          <titulo3>Vista rápida del proyecto</titulo3>
+          <texto color="var(--texto-suave)" margen="12px 0 18px">
+            Un demo elegante para mostrar lo que puedes construir solo con HTML y CSS,
+            utilizando nombres de clases y secciones en español.
+          </texto>
+          <contenedor clase="datos">
+            <contenedor clase="dato">
+              <fuerte>12</fuerte>
+              <linea>Secciones listas</linea>
+            </contenedor>
+            <contenedor clase="dato">
+              <fuerte>100%</fuerte>
+              <linea>Gratis y abierto</linea>
+            </contenedor>
+            <contenedor clase="dato">
+              <fuerte>5 min</fuerte>
+              <linea>Para iniciar</linea>
+            </contenedor>
+          </contenedor>
+        </contenedor>
+      </contenedor>
+    </seccion>
+
+    <seccion clase="seccion" id="caracteristicas">
+      <contenedor clase="contenedor">
+        <contenedor clase="titulo-seccion">
+          <titulo2>Características del demo</titulo2>
+          <texto>Una estructura moderna, con jerarquía visual y componentes reutilizables para practicar diseño web.</texto>
+        </contenedor>
+        <contenedor clase="rejilla">
+          <articulo clase="tarjeta revelar">
+            <linea>01</linea>
+            <titulo3>HTML legible</titulo3>
+            <texto>Etiquetas, clases y textos en español para facilitar el aprendizaje y la lectura del código.</texto>
+          </articulo>
+          <articulo clase="tarjeta revelar">
+            <linea>02</linea>
+            <titulo3>CSS modular</titulo3>
+            <texto>Variables, tarjetas y rejillas para que puedas copiar secciones completas y adaptarlas.</texto>
+          </articulo>
+          <articulo clase="tarjeta revelar">
+            <linea>03</linea>
+            <titulo3>Diseño profesional</titulo3>
+            <texto>Tipografía editorial, contrastes definidos y bloques con profundidad para un look premium.</texto>
+          </articulo>
+          <articulo clase="tarjeta revelar">
+            <linea>04</linea>
+            <titulo3>Rápido de editar</titulo3>
+            <texto>Todo en un solo archivo para practicar sin configuraciones ni dependencias extras.</texto>
+          </articulo>
+        </contenedor>
+      </contenedor>
+    </seccion>
+
+    <seccion clase="seccion" id="como-funciona">
+      <contenedor clase="contenedor">
+        <contenedor clase="titulo-seccion">
+          <titulo2>Cómo funciona</titulo2>
+          <texto>Una guía simple para avanzar desde la estructura hasta los detalles finales de estilo.</texto>
+        </contenedor>
+        <contenedor clase="pasos">
+          <contenedor clase="paso revelar">
+            <contenedor clase="numero">1</contenedor>
+            <contenedor>
+              <titulo3>Explora la estructura</titulo3>
+              <texto clase="texto-suave">Revisa las secciones y observa cómo se organizan los contenedores.</texto>
+            </contenedor>
+          </contenedor>
+          <contenedor clase="paso revelar">
+            <contenedor clase="numero">2</contenedor>
+            <contenedor>
+              <titulo3>Personaliza estilos</titulo3>
+              <texto clase="texto-suave">Cambia colores, tipografías y espacios para crear tu propia marca.</texto>
+            </contenedor>
+          </contenedor>
+          <contenedor clase="paso revelar">
+            <contenedor clase="numero">3</contenedor>
+            <contenedor>
+              <titulo3>Comparte tu demo</titulo3>
+              <texto clase="texto-suave">Usa este demo como base para portafolios, landing pages o clases.</texto>
+            </contenedor>
+          </contenedor>
+        </contenedor>
+      </contenedor>
+    </seccion>
+
+    <seccion clase="seccion" id="recursos">
+      <contenedor clase="contenedor">
+        <contenedor clase="titulo-seccion">
+          <titulo2>Fragmento de código</titulo2>
+          <texto>Ejemplo directo de cómo escribimos HTML y CSS con nomenclatura en español.</texto>
+        </contenedor>
+        <contenedor clase="panel-codigo">
+          <encabezado>
+            <linea clase="punto"></linea>
+            <linea clase="punto"></linea>
+            <linea clase="punto"></linea>
+          </encabezado>
+          <preformato><codigo>&lt;seccion clase="destacado"&gt;
+  &lt;titulo1&gt;Bienvenido a tu demo&lt;/titulo1&gt;
+  &lt;texto&gt;Construye con claridad y estilo.&lt;/texto&gt;
+  &lt;enlace clase="boton" href="#"&gt;Comenzar&lt;/enlace&gt;
+&lt;/seccion&gt;
+
+.destacado {
+  relleno: 80px 0;
+  fondo: degradado-lineal(120deg, #f4a340, #3dd6a1);
+  color: #0f1218;
+}
+          </codigo></preformato>
+        </contenedor>
+      </contenedor>
+    </seccion>
+
+    <seccion clase="seccion" id="comunidad">
+      <contenedor clase="contenedor">
+        <contenedor clase="titulo-seccion">
+          <titulo2>Lo que dice la comunidad</titulo2>
+          <texto>Personas que están aprendiendo HTML y CSS en español y ya lo aplican en sus proyectos.</texto>
+        </contenedor>
+        <contenedor clase="testimonios">
+          <articulo clase="testimonio revelar">
+            <texto>"Antes me perdía con nombres en inglés. Ahora entiendo cada parte del código."</texto>
+            <fuerte>Mariana R., estudiante</fuerte>
+          </articulo>
+          <articulo clase="testimonio revelar">
+            <texto>"El demo se ve profesional y es súper fácil de adaptar para mis clases."</texto>
+            <fuerte>Diego M., instructor</fuerte>
+          </articulo>
+          <articulo clase="testimonio revelar">
+            <texto>"Pude armar una landing en una tarde usando estas secciones."</texto>
+            <fuerte>Valeria C., freelance</fuerte>
+          </articulo>
+        </contenedor>
+      </contenedor>
+    </seccion>
+
+    <seccion clase="seccion" id="empezar">
+      <contenedor clase="contenedor">
+        <contenedor clase="cta">
+          <contenedor>
+            <titulo2>Listo para construir tu sitio?</titulo2>
+            <texto color="var(--texto-suave)">Descarga el proyecto, edita el HTML y empieza a personalizar con CSS.</texto>
+          </contenedor>
+          <contenedor clase="acciones">
+            <enlace clase="boton" href="#">Descargar demo</enlace>
+            <enlace clase="boton secundario" href="#">Ver documentación</enlace>
+          </contenedor>
+        </contenedor>
+      </contenedor>
+    </seccion>
+  </principal>
+
+  <final>
+    <contenedor>
+      <texto>Spanish HTML. Proyecto gratuito para aprender a programar en español.</texto>
+    </contenedor>
+  </final>
+
   <script type="module" src="../src/main.js"></script>
 </body>
 </html>

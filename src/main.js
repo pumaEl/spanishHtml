@@ -24,12 +24,11 @@ function translateStop(stop) {
     const parts = stop.trim().split(/\s+/);
     // nada que traducir
     if (parts.length === 0) return stop;
-    // SOLO traducimos la primera parte (color)
-    parts[0] = translate(parts[0]);
-    return parts.join(" ");
+    // traducimos todos los tokens del stop (color + posiciones)
+    return parts.map(part => translate(part)).join(" ");
 }
 function translateMedia(condition) {
-    return condition.replace(/(\w+)(?=\s*:)/g, match => diccionario[match.toLowerCase()] || match);
+    return condition.replace(/([a-z-]+)(?=\s*:)/gi, match => diccionario[match.toLowerCase()] || match);
 }
 function translate(value) {
     if (!value) return value;
@@ -40,6 +39,17 @@ function translate(value) {
     if (/\d+(\.\d+)?([a-z]{2,3}|%)$/i.test(value)) {
         return value;
     }
+    // Proteger custom properties (--mi-variable)
+    const customProps = [];
+    value = value.replace(/--[a-zA-Z0-9-]+/g, match => {
+        customProps.push(match);
+        return `__CUSTOM_PROP_${customProps.length - 1}__`;
+    });
+    const restoreCustomProps = str =>
+        str.replace(/__CUSTOM_PROP_(\d+)__/g, (_, i) => {
+            const restored = customProps[Number(i)];
+            return restored || `__CUSTOM_PROP_${i}__`;
+        });
     // Detectar función CSS
     const fnMatch = value.match(/^([a-z-]+)\((.*)\)$/i);
     if (fnMatch) {
@@ -48,15 +58,17 @@ function translate(value) {
         const translatedFn =
             diccionario[fnName.toLowerCase()] || fnName;
         // Separar argumentos sin romper funciones anidadas
-        const args = splitArgs(fnArgs).map(arg => translateStop(arg));
-        return `${translatedFn}(${args.join(", ")})`;
+        const args = splitArgs(fnArgs).map(arg => translate(arg));
+        const translated = `${translatedFn}(${args.join(", ")})`;
+        return restoreCustomProps(translated);
     }
     // Traducir palabras individuales (incluye palabras con guiones como "borde-caja")
     value = value.replace(/([a-zA-Z][a-zA-Z0-9-]*)/g, match => {
         const lower = match.toLowerCase();
+        if (reverseMap && reverseMap[lower]) return reverseMap[lower];
         return diccionario[lower] || match;
     });
-    return value;
+    return restoreCustomProps(value);
 }
 
 function translateSelector(selector) {
@@ -66,20 +78,26 @@ function translateSelector(selector) {
     });
 }
 
-function translateCSS(css) {
+function translateAtRules(text) {
+  return text.replace(/@([a-z-]+)/gi, (match, name) => {
+    const translated = diccionario[name.toLowerCase()] || name;
+    return `@${translated}`;
+  });
+}
 
-  // traducir @media
-  css = css.replace(/@media\s*\(([^)]+)\)/gi, (match, cond) => {
+function translateSelectorText(text) {
+  let out = translateAtRules(text);
+  out = out.replace(/@media\s*\(([^)]+)\)/gi, (match, cond) => {
     return `@media (${translateMedia(cond)})`;
   });
+  out = translateSelector(out);
+  return out;
+}
 
-  // traducir selectores pseudo
-  css = css.replace(/:([a-z-]+)/gi, (m, pseudo) => {
-    return ":" + (diccionario[pseudo] || pseudo);
-  });
-
+function translateDeclarations(text) {
   // traducir propiedades
-  css = css.replace(/([a-zA-Z-]+)\s*:/g, (match, prop) => {
+  let out = text.replace(/([a-zA-Z-]+)\s*:/g, (match, prop) => {
+    if (prop.startsWith("--")) return match;
 
     const lower = prop.toLowerCase();
 
@@ -100,12 +118,68 @@ function translateCSS(css) {
     return match;
   });
 
-  // traducir valores
-  css = css.replace(/:\s*([^;}{]+)/g, (match, value) => {
+  // traducir valores (solo dentro de bloques)
+  out = out.replace(/:\s*([^;]+)/g, (match, value) => {
     return ": " + translate(value.trim());
   });
 
-  return css;
+  return out;
+}
+
+function translateCSS(css) {
+  let result = "";
+  let buffer = "";
+  let depth = 0;
+  let inString = false;
+  let stringChar = "";
+  for (let i = 0; i < css.length; i++) {
+    const char = css[i];
+    const prev = css[i - 1];
+
+    if (inString) {
+      buffer += char;
+      if (char === stringChar && prev !== "\\") {
+        inString = false;
+        stringChar = "";
+      }
+      continue;
+    }
+
+    if (char === '"' || char === "'") {
+      inString = true;
+      stringChar = char;
+      buffer += char;
+      continue;
+    }
+
+    if (char === "{") {
+      const header = translateSelectorText(buffer);
+      result += header + "{";
+      buffer = "";
+      depth++;
+      continue;
+    }
+
+    if (char === "}") {
+      const body = translateDeclarations(buffer);
+      result += body + "}";
+      buffer = "";
+      depth = Math.max(0, depth - 1);
+      continue;
+    }
+
+    buffer += char;
+  }
+
+  if (buffer) {
+    if (depth > 0) {
+      result += translateDeclarations(buffer);
+    } else {
+      result += translateSelectorText(buffer);
+    }
+  }
+
+  return result;
 }
 const map = Object.fromEntries(
   Object.entries(cssProps).map(([attr, cssProp]) => [
@@ -162,7 +236,10 @@ function parseTags() {
       for (let attr of el.attributes) {
         nuevo.setAttribute(attr.name, attr.value)
       }
-      nuevo.innerHTML = el.innerHTML
+      // mover nodos hijos reales para no recrearlos desde HTML
+      while (el.firstChild) {
+        nuevo.appendChild(el.firstChild)
+      }
       el.replaceWith(nuevo)
     })
   })
@@ -170,3 +247,5 @@ function parseTags() {
 parseTags();
 parseEstilos();
 parseAttr();
+
+
